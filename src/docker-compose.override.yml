@@ -1,0 +1,12 @@
+services:
+  catelogdb:
+    container_name: catelogdb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=CatelogDb
+    restart: always 
+    ports:
+      - "5432:5432"      
+    volumes:
+      - postgres_catelog:/var/lib/postgresql/data      
