@@ -1,7 +1,5 @@
 
 
-using BuildingBlocks.Exceptions.Handler;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // add services to container
@@ -22,6 +20,11 @@ builder.Services.AddMarten(option =>
 {
     option.Connection(builder.Configuration.GetConnectionString("MartenDb")!);       
 }).UseLightweightSessions();
+
+if(builder.Environment.IsDevelopment())
+{
+    builder.Services.InitializeMartenWith<CatelogInitialData>();
+}
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
