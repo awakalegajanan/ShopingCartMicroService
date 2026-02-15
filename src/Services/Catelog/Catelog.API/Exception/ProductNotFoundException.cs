@@ -1,17 +1,12 @@
-﻿using System;
+﻿using BuildingBlocks.Exceptions;
+using System;
 
 namespace Catelog.API.Exception
 {
-    public class ProductNotFoundException : System.Exception
+    public class ProductNotFoundException : NotFoundException
     {
-        public ProductNotFoundException() : base("Product not found")
+        public ProductNotFoundException(Guid Id) : base("Product", Id)
         {
-        }
-        public ProductNotFoundException(string message) : base(message)
-        {
-        }
-        public ProductNotFoundException(string message, System.Exception innerException) : base(message, innerException)
-        {
-        }
+        }        
     }
 }

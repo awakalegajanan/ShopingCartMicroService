@@ -1,6 +1,6 @@
-using FluentValidation;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+
+
+using BuildingBlocks.Exceptions.Handler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,48 +22,54 @@ builder.Services.AddMarten(option =>
     option.Connection(builder.Configuration.GetConnectionString("MartenDb")!);       
 }).UseLightweightSessions();
 
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
+
 var app = builder.Build();
 
 //configure the http request pipeline
 app.MapCarter();
 
-app.UseExceptionHandler(exceptionHandlerApp =>
-{
-    exceptionHandlerApp.Run(async context =>
-    {
-        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-        if(exception == null)
-        {
-            return;
-        }
-        
-        var problemDetails = new ProblemDetails
-        {
-            Status = StatusCodes.Status500InternalServerError,
-            Title = exception.Message,
-            Detail = exception.StackTrace
-        };
-        
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        logger.LogError(exception, exception.Message);
+app.UseExceptionHandler(options => { });
 
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        context.Response.ContentType = "application/problem+json";
-        
-        await context.Response.WriteAsJsonAsync(problemDetails);
+#region earlier handler code
+//app.UseExceptionHandler(exceptionHandlerApp =>
+//{
+//    exceptionHandlerApp.Run(async context =>
+//    {
+//        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+//        if(exception == null)
+//        {
+//            return;
+//        }
 
-        //var exceptionHandlerPathFeature =
-        //    context.Features.Get<IExceptionHandlerPathFeature>();
-        //if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
-        //{
-        //    await context.Response.WriteAsync(" The file was not found.");
-        //}
+//        var problemDetails = new ProblemDetails
+//        {
+//            Status = StatusCodes.Status500InternalServerError,
+//            Title = exception.Message,
+//            Detail = exception.StackTrace
+//        };
 
-        //if (exceptionHandlerPathFeature?.Path == "/")
-        //{
-        //    await context.Response.WriteAsync(" Page: Home.");
-        //}
-    });
-});
+//        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+//        logger.LogError(exception, exception.Message);
 
+//        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+//        context.Response.ContentType = "application/problem+json";
+
+//        await context.Response.WriteAsJsonAsync(problemDetails);
+
+//        //var exceptionHandlerPathFeature =
+//        //    context.Features.Get<IExceptionHandlerPathFeature>();
+//        //if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
+//        //{
+//        //    await context.Response.WriteAsync(" The file was not found.");
+//        //}
+
+//        //if (exceptionHandlerPathFeature?.Path == "/")
+//        //{
+//        //    await context.Response.WriteAsync(" Page: Home.");
+//        //}
+//    });
+//});
+#endregion earlier handler code
 app.Run();

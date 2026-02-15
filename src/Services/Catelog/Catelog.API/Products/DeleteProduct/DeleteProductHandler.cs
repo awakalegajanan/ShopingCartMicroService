@@ -16,14 +16,14 @@ namespace Catelog.API.Products.DeleteProduct
     internal class DeleteProductCommandHandler(IDocumentSession session, ILogger<DeleteProductCommandHandler> logger)
         : ICommandHandler<DeleteProductCommand, DeleteProductResult>
     {
-        public async Task<DeleteProductResult> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<DeleteProductResult> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
         {
-            logger.LogInformation("DeleteProductCommandHandler.Handle called with {@Command}", request);
-            var product = await session.LoadAsync<Product>(request.Id, cancellationToken);
+            logger.LogInformation("DeleteProductCommandHandler.Handle called with {@Command}", command);
+            var product = await session.LoadAsync<Product>(command.Id, cancellationToken);
             if (product is null)
             {
                 logger.LogInformation("Not found product");
-                throw new ProductNotFoundException();
+                throw new ProductNotFoundException(command.Id);
             }
 
             session.Delete(product);
