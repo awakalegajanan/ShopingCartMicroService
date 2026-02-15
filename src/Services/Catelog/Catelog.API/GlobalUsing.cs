@@ -6,3 +6,6 @@ global using Catelog.API.Models;
 global using Marten;
 global using Catelog.API.Exception;
 global using FluentValidation;
+global using FluentValidation;
+global using Microsoft.AspNetCore.Diagnostics;
+global using Microsoft.AspNetCore.Mvc;
