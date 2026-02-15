@@ -1,6 +1,15 @@
 version: "3.8"
 
 services:
+
+  catelogapi:
+    build:
+      context: ./Services/Catelog/Catelog.API
+      dockerfile: Dockerfile
+    image: catelogapi:dev
+    ports:
+      - "5000:80"
+
   catelogdb:
     image: postgres:15
     
