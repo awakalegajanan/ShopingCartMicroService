@@ -10,3 +10,4 @@ global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.AspNetCore.Mvc;
 global using BuildingBlocks.Exceptions.Handler;
 global using Catelog.API.Data;
+global using Marten.Pagination;
