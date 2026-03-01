@@ -1,5 +1,8 @@
 
 
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // add services to container
@@ -28,6 +31,8 @@ if(builder.Environment.IsDevelopment())
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("MartenDb")!, name: "PostgreSQL", tags: new[] { "ready" });
 
 var app = builder.Build();
 
@@ -35,6 +40,29 @@ var app = builder.Build();
 app.MapCarter();
 
 app.UseExceptionHandler(options => { });
+
+app.UseHealthChecks("/health",
+    new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+        //Predicate = (check) => check.Tags.Contains("ready"),
+        //ResponseWriter = async (context, report) =>
+        //{
+        //    context.Response.ContentType = "application/json";
+        //    var response = new
+        //    {
+        //        status = report.Status.ToString(),
+        //        checks = report.Entries.Select(entry => new
+        //        {
+        //            name = entry.Key,
+        //            status = entry.Value.Status.ToString(),
+        //            exception = entry.Value.Exception?.Message,
+        //            duration = entry.Value.Duration.ToString()
+        //        })
+        //    };
+        //    await context.Response.WriteAsJsonAsync(response);
+        //}
+    });
 
 #region earlier handler code
 //app.UseExceptionHandler(exceptionHandlerApp =>
